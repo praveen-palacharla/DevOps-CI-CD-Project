@@ -2,7 +2,7 @@ pipeline {
   agent any
 	
   environment {
-    DOCKERHUB_CREDENTIALS = credentials('docker-hub-cred')
+    DOCKERHUB_CREDENTIALS = credentials('docker-jenkins')
     REMOTE_SERVER = '54.161.196.236'
     REMOTE_USER = 'ec2-user' 	  	  
   }
@@ -55,7 +55,7 @@ pipeline {
 	  
     stage('Login to DockerHub') {
       steps {
-        sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u praveenpalacharla   $DOCKERHUB_CREDENTIALS_USR --password-stdin dckr_pat_xnyMiWFSJwU8xJ7S6Ou9PqP3c-c'
+        sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u   $DOCKERHUB_CREDENTIALS_USR --password-stdin'
       }
     }
 	  
