@@ -2,8 +2,8 @@ pipeline {
   agent any
 	
   environment {
-    DOCKERHUB_CREDENTIALS = credentials('docker-jenkins')
-    REMOTE_SERVER = '54.161.196.236'
+    DOCKERHUB_CREDENTIALS = credentials('Docker')
+    REMOTE_SERVER = '3.145.93.213'
     REMOTE_USER = 'ec2-user' 	  	  
   }
 	
@@ -46,8 +46,8 @@ pipeline {
     stage('Build Docker Image') {
 
       steps {
-        sh 'docker build -t java-web-app:latest .'
-        sh 'docker tag java-web-app praveenpalacharla/java-web-app:latest'
+        sh 'docker build -t docker-jenkins-project:latest .'
+        sh 'docker tag docker-jenkins-project praveenpalacharla/docker-jenkins-project:latest'
       }
     }
 	  
@@ -63,7 +63,7 @@ pipeline {
 	  
     stage('Push Image to dockerHUb') {
       steps {
-        sh 'docker push praveenpalacharla/java-web-app:latest'
+        sh 'docker push praveenpalacharla/docker-jenkins-project:latest'
       }
       post {
         always {
@@ -78,10 +78,10 @@ pipeline {
     stage('Deploy Docker image to AWS instance') {
       steps {
         script {
-          sshagent(credentials: ['jenkins-ssh']) {
+          sshagent(credentials: ['ec2-user']) {
           sh "ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_SERVER} 'docker stop javaApp || true && docker rm javaApp || true'"
-	  sh "ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_SERVER} 'docker pull praveenpalacharla/java-web-app'"
-          sh "ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_SERVER} 'docker run --name javaApp -d -p 8081:8081 praveenpalacharla/java-web-app'"
+	  sh "ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_SERVER} 'docker pull praveenpalacharla/docker-jenkins-project'"
+          sh "ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_SERVER} 'docker run --name javaApp -d -p 8081:8081 praveenpalacharla/docker-jenkins-project'"
           }
         }
       }
